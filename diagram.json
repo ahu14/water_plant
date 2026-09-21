@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "author": "Sherly Hu",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-s3-devkitc-1", "id": "esp", "top": 86.22, "left": 90.97, "attrs": {} },
+    { "type": "wokwi-ili9341", "id": "lcd1", "top": -66.4, "left": -115.5, "attrs": {} },
+    {
+      "type": "wokwi-photoresistor-sensor",
+      "id": "ldr1",
+      "top": -67.5,
+      "left": 52.1,
+      "rotate": 90,
+      "attrs": {}
+    },
+    { "type": "wokwi-potentiometer", "id": "pot1", "top": 8.3, "left": 220.6, "attrs": {} },
+    {
+      "type": "wokwi-ntc-temperature-sensor",
+      "id": "ntc1",
+      "top": 405.9,
+      "left": 76.7,
+      "rotate": 270,
+      "attrs": {}
+    }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "lcd1:VCC", "esp:5V", "red", [ "v0" ] ],
+    [ "lcd1:GND", "esp:GND.1", "black", [ "v0" ] ],
+    [ "lcd1:SCK", "esp:12", "green", [ "v0" ] ],
+    [ "lcd1:MOSI", "esp:11", "green", [ "v0" ] ],
+    [ "lcd1:MISO", "esp:13", "green", [ "v0" ] ],
+    [ "lcd1:CS", "esp:10", "green", [ "v0" ] ],
+    [ "lcd1:D/C", "esp:9", "green", [ "v0" ] ],
+    [ "lcd1:RST", "esp:4", "green", [ "v0" ] ],
+    [ "ldr1:VCC", "esp:3V3.2", "red", [ "v0" ] ],
+    [ "ldr1:GND", "esp:GND.2", "black", [ "v0" ] ],
+    [ "esp:5", "ldr1:AO", "green", [ "h0" ] ],
+    [ "pot1:GND", "esp:GND.3", "black", [ "v0" ] ],
+    [ "pot1:SIG", "esp:6", "green", [ "v0" ] ],
+    [ "pot1:VCC", "esp:3V3.1", "red", [ "v0" ] ],
+    [ "esp:7", "ntc1:OUT", "green", [ "h0" ] ],
+    [ "ntc1:GND", "esp:GND.4", "black", [ "v0" ] ],
+    [ "esp:3V3.2", "ntc1:VCC", "red", [ "v9.6", "h47.95" ] ]
+  ],
+  "dependencies": {}
+}
