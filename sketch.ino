@@ -54,13 +54,13 @@ void setup(){
   canvas.setCursor(0, 0);
   canvas.println("WiFi Connected !");
   tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 320, 240);
-
-  client.setServer(mqtt_server, mqtt_port);
 }
 
 void loop(){
   if (!client.connected()){
     String clientId = "ESP32-Ahu" + String(random(0xffff), HEX);
+
+    client.setServer(mqtt_server, mqtt_port);
 
     if (client.connect(clientId.c_str())){
       canvas.fillScreen(ILI9341_BLACK);
@@ -91,24 +91,16 @@ void loop(){
   float celsius = 1 / (log(1 / (1023. / temp_value - 1)) / BETA + 1.0 / 298.15) - 273.15;
 
 
-  const float GAMMA = 0.7;
-  const float RL10 = 50;
-
   int ldr_value = analogRead(LDR);
-  float voltage = ldr_value * 3.3 / 4095.0;
+  float voltage = ldr_value * 5 / 4095.0;
 
   float R_fixed = 2000.0;
-  float resistance = R_fixed * voltage / (3.3 - voltage);
+  float resistance = R_fixed * voltage / (1 - voltage / 5);
 
   const float GAMMA = 0.7;
   const float RL10 = 50.0;
 
   float lux = pow(RL10 * 1e3 * pow(10, GAMMA) / resistance, 1.0 / GAMMA);
-
-
-  char data[100];
-  sprintf(data, "{\"moisture\": %d,\"temperature\": %2.f,\"brightness\": %d}", poten_value, celsius, lux);
-  client.publish(topic, data);
 
 
   canvas.fillScreen(ILI9341_BLACK);
@@ -127,6 +119,34 @@ void loop(){
   canvas.print("BRIGHTNESS: ");
   canvas.print(lux);
   canvas.println(" lux");
+
+  canvas.setCursor(0, 90);
+
+  char message[80];
+
+  if (celsius > 32 && poten_value < 1000){
+    strcpy(message, "Hot day ! Water more than usual");
+  }
+
+  else if (poten_value < 1000){
+    strcpy(message, "DRY ! Water the plant soon !");
+  }
+
+  else if (celsius < 30 && lux < 100){
+    strcpy(message, "Night time ! No need to water too much");
+  }
+
+  else{
+    strcpy(message, "Okk plant is happy !");
+  }
+
+  canvas.println(message);
+
+
+  char data[150];
+  sprintf(data, "{\"moisture\": %d,\"temp\": %.2f,\"bright\": %.0f, \"message\": %s}", poten_value, celsius, lux, message);
+  client.publish(topic, data);
+
 
   tft.drawRGBBitmap(0, 0, canvas.getBuffer(), 320, 240);
   delay(1000);
