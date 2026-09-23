@@ -13,7 +13,7 @@ Using ESP-32 S3 Wokwi Simulator. First time studying embedded / electronics.
 
 - Using WiFi to connect to MQTT
 
-- Using SPI display to show 
+- Using SPI display to show current plant status and give recommendation based on current weather and temperature
 
 
 ## How to run project
